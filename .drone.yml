@@ -7,7 +7,7 @@ steps:
   - name: resolve
     image: alpine
     commands:
-      - curl -v https://github.com
+      - cat /etc/resolv.conf
     when:
       status: [ success, failure ]
   - name: docker-build-npd
