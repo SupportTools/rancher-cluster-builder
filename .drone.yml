@@ -4,6 +4,8 @@ type: kubernetes
 name: Rancher-Cluster-Builder
 
 steps:
+  - name: PLUGIN_CUSTOM_DNS
+    value: 1.1.1.1    
   - name: docker-build-npd
     image: plugins/docker
     settings:
