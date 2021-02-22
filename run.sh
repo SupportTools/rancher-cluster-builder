@@ -1,6 +1,16 @@
 #!/bin/bash
 
-rolling-reboot() {
+pull-files-from-s3() {
+  Cluster=$1
+  aws s3 sync --exclude="cluster.yml" s3://"$S3_BUCKET"/clusters/"$Cluster"/ ~/clusters/"$Cluster"/
+}
+
+push-files-from-s3() {
+  Cluster=$1
+  aws s3 sync ~/clusters/"$Cluster"/ s3://"$S3_BUCKET"/clusters/"$Cluster"/
+}
+
+rolling_reboot() {
   Cluster=$1
   cd ~/clusters/"$Cluster"
   export KUBECONFIG=./kube_config_cluster.yml
@@ -62,6 +72,17 @@ rolling-reboot() {
   done
 }
 
+cluster_up() {
+  Cluster=$1
+  cd ~/clusters/"$Cluster"
+  rke up --config cluster.yml
+}
+
+cluster_new() {
+  Cluster=$1
+  cd ~/clusters/"$Cluster"
+  rke up --config cluster.yml
+}
 
 echo "Setting up SSH key..."
 if [[ -z $SSH_KEY ]]
@@ -91,11 +112,13 @@ fi
 
 if [[ "$Action" == "cluster_up" ]]
 then
-  cd ~/clusters/"$Cluster"
-  rke up --config cluster.yml
-elfi [[ "$Action" == "rolling_reboot" ]]
+  cluster_up
+elif [[ "$Action" == "cluster_new" ]]
 then
-  rolling-reboot
+  cluster_new
+elif [[ "$Action" == "rolling_reboot" ]]
+then
+  rolling_reboot
 else
   echo "Unknown Action"
   exit 254
