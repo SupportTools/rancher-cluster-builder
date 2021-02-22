@@ -4,20 +4,7 @@ type: kubernetes
 name: Rancher-Cluster-Builder
 
 steps:
-  - name: docker-build
-    image: plugins/docker
-    settings:
-      repo: supporttools/rancher-cluster-builder
-      tags:
-        - ${DRONE_BUILD_NUMBER}
-        - latest
-      cache_from: supporttools/rancher-cluster-builder:latest
-      username:
-        from_secret: docker-username
-      password:
-        from_secret: docker-password
-
-  - name: Run-Builder
+  - name: Builder
     image: supporttools/rancher-cluster-builder:${DRONE_BUILD_NUMBER}
     pull: true
     environment:
