@@ -35,6 +35,11 @@ nodes:
     hostname_override: a1ubk8sl02
     internal_address: 172.27.7.32
     role: [controlplane,worker,etcd]
+  - address: 172.27.7.33
+    user: root
+    hostname_override: a1ubk8sl03
+    internal_address: 172.27.7.33
+    role: [controlplane,worker,etcd]
 
 ingress:
   provider: nginx
