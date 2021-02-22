@@ -23,4 +23,4 @@ steps:
       SSH_KEY:
         from_secret: ssh_key
     commands:
-      - ssh root@172.27.7.21 "uptime"
+      - ssh -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@172.27.7.21 "uptime"
