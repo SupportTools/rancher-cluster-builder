@@ -5,7 +5,7 @@ name: Rancher-Cluster-Builder
 
 steps:
   - name: Builder
-    image: supporttools/rancher-cluster-builder:${DRONE_BUILD_NUMBER}
+    image: supporttools/rancher-cluster-builder:latest
     pull: true
     environment:
       SSH_KEY:
