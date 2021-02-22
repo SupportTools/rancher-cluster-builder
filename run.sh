@@ -113,13 +113,12 @@ rolling_reboot() {
 cluster_up() {
   pull-files-from-s3 $Cluster
   cd "$CWD"/clusters/"$Cluster"
-  rke up --config cluster.yml
-  push-files-to-s3 $Cluster
-}
-
-cluster_new() {
-  cd "$CWD"/clusters/"$Cluster"
-  rke up --config cluster.yml
+  if [[ "$DEBUG" == "true" ]]
+  then
+    rke up --debug --config cluster.yml
+  else
+    rke up --config cluster.yml
+  fi
   push-files-to-s3 $Cluster
 }
 
@@ -136,9 +135,6 @@ verify-files
 if [[ "$Action" == "cluster_up" ]]
 then
   cluster_up
-elif [[ "$Action" == "cluster_new" ]]
-then
-  cluster_new
 elif [[ "$Action" == "rolling_reboot" ]]
 then
   rolling_reboot
