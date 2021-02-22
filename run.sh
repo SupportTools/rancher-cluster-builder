@@ -1,18 +1,20 @@
 #!/bin/bash
 
+CWD=`pwd`
+
 pull-files-from-s3() {
   Cluster=$1
-  aws s3 sync --exclude="cluster.yml" s3://"$S3_BUCKET"/clusters/"$Cluster"/ ~/clusters/"$Cluster"/
+  aws s3 sync --exclude="cluster.yml" s3://"$S3_BUCKET"/clusters/"$Cluster"/ "$CWD"/clusters/"$Cluster"/
 }
 
 push-files-from-s3() {
   Cluster=$1
-  aws s3 sync ~/clusters/"$Cluster"/ s3://"$S3_BUCKET"/clusters/"$Cluster"/
+  aws s3 sync "$CWD"/clusters/"$Cluster"/ s3://"$S3_BUCKET"/clusters/"$Cluster"/
 }
 
 rolling_reboot() {
   Cluster=$1
-  cd ~/clusters/"$Cluster"
+  cd "$CWD"/clusters/"$Cluster"
   export KUBECONFIG=./kube_config_cluster.yml
   for node in `kubectl get nodes -o name | awk -F'/' '{print $2}'`
   do
@@ -74,13 +76,13 @@ rolling_reboot() {
 
 cluster_up() {
   Cluster=$1
-  cd ~/clusters/"$Cluster"
+  cd "$CWD"/clusters/"$Cluster"
   rke up --config cluster.yml
 }
 
 cluster_new() {
   Cluster=$1
-  cd ~/clusters/"$Cluster"
+  cd "$CWD"/clusters/"$Cluster"
   rke up --config cluster.yml
 }
 
@@ -98,13 +100,13 @@ then
   exit 1
 fi
 
-if [[ ! -d ~/clusters/"$Cluster" ]]
+if [[ ! -d "$CWD"/clusters/"$Cluster" ]]
 then
   echo "Cluster folder is missing"
   exit 2
 fi
 
-if [[ ! -f ~/clusters/cluster.yml ]]
+if [[ ! -f "$CWD"/clusters/cluster.yml ]]
 then
   echo "cluster.yml is missing"
   exit 3
