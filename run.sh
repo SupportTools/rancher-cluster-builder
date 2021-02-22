@@ -56,9 +56,10 @@ rolling-reboot() {
       sleep 360
       rke up
     else
-     echo "Uncordoning node..."
-     kubectl uncordon "$node"
+       echo "Uncordoning node..."
+       kubectl uncordon "$node"
     fi
+  done
 }
 
 
