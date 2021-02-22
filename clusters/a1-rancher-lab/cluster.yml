@@ -22,23 +22,23 @@ local_cluster_auth_endpoint:
     HMUfpIBvFSDJ3gyICh3WZlXi/EjJKSZp4A==
     -----END CERTIFICATE-----
   enabled: true
-  fqdn: a1-k8s-labs-k8s.support.tools
+  fqdn: a1-rancher-lab-k8s.support.tools
 
 nodes:
-  - address: 172.27.7.31
+  - address: 172.27.7.21
     user: root
-    hostname_override: a1ubk8sl01
-    internal_address: 172.27.7.31
+    hostname_override: a1ubrancherl01
+    internal_address: 172.27.7.21
     role: [controlplane,worker,etcd]
-  - address: 172.27.7.32
+  - address: 172.27.7.22
     user: root
-    hostname_override: a1ubk8sl02
-    internal_address: 172.27.7.32
+    hostname_override: a1ubrancherl02
+    internal_address: 172.27.7.22
     role: [controlplane,worker,etcd]
-  - address: 172.27.7.33
+  - address: 172.27.7.23
     user: root
-    hostname_override: a1ubk8sl03
-    internal_address: 172.27.7.33
+    hostname_override: a1ubrancherl03
+    internal_address: 172.27.7.23
     role: [controlplane,worker,etcd]
 
 ingress:
@@ -49,15 +49,35 @@ services:
     backup_config:
       enabled: true     # enables recurring etcd snapshots
       interval_hours: 12 # time increment between snapshots
-      retention: 6     # time in days before snapshot purge
-  kube-api:
-    service_cluster_ip_range: 10.153.0.0/16
-  kube-controller:
-    cluster_cidr: 10.152.0.0/16
-    service_cluster_ip_range: 10.153.0.0/16
-  kubelet:
-    cluster_dns_server: 10.153.0.10
-    cluster_domain: a1-k8s-lab.local
+      retention: 7     # time in days before snapshot purge
+      s3backupconfig:
+        access_key: "s3backupconfig.access_key"
+        secret_key:  "s3backupconfig.secret_key"
+        bucket_name: "s3backupconfig.bucket_name"
+        folder: "s3backupconfig.folder"
+        endpoint: "s3backupconfig.endpoint"
+        region: "s3backupconfig.region"
+
+cloud_provider:
+  name: vsphere
+  vsphereCloudProvider:
+    disk: {}
+    global:
+      insecure-flag: true
+      soap-roundtrip-count: 0
+    network: {}
+    virtual_center:
+      cloud_provider.virtual_center:
+        datacenters: cloud_provider.datacenters
+        port: cloud_provider.port
+        soap-roundtrip-count: 0
+        user: cloud_provider.username
+        password: cloud_provider.password
+    workspace:
+      datacenter: cloud_provider.datacenters
+      default-datastore: cloud_provider.default-datastore
+      folder: cloud_provider.folder
+      server: cloud_provider.virtual_center
 
 dns:
   provider: coredns
@@ -66,6 +86,3 @@ dns:
   - 172.27.2.24
 
 kubernetes_version: v1.19.7-rancher1-1
-
-addons_include:
-  - rancher_import
