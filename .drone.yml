@@ -15,3 +15,12 @@ steps:
         from_secret: docker-username
       password:
         from_secret: docker-password
+
+  - name: Test-SSH
+    image: supporttools/rancher-cluster-builder:${DRONE_BUILD_NUMBER}
+    pull: true
+    environment:
+      SSH_KEY:
+        from_secret: ssh_key
+    commands:
+      - ssh root@172.27.7.21 "uptime"
