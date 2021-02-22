@@ -4,14 +4,6 @@ type: kubernetes
 name: Rancher-Cluster-Builder
 
 steps:
-  - name: resolve
-    image: alpine
-    commands:
-      - cat /etc/resolv.conf
-      - sleep 360
-    when:
-      status: [ success, failure ]
-
   - name: docker-build
     image: plugins/docker
     settings:
@@ -23,8 +15,3 @@ steps:
         from_secret: docker-username
       password:
         from_secret: docker-password
-    when:
-      branch: main
-      event:
-        include:
-        - push
