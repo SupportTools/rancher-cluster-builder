@@ -4,21 +4,7 @@ type: kubernetes
 name: Rancher-Cluster-Builder
 
 steps:
-  - name: docker-build-npd
-    image: plugins/docker
-    settings:
-      repo: supporttools/rancher-cluster-builder
-      tags:
-        - pr-${DRONE_BUILD_NUMBER}
-      username:
-        from_secret: docker-username
-      password:
-        from_secret: docker-password
-    when:
-      branch:
-      - feature/*
-
-  - name: docker-build-prd
+  - name: docker-build
     image: plugins/docker
     settings:
       repo: supporttools/rancher-cluster-builder
@@ -29,6 +15,3 @@ steps:
         from_secret: docker-username
       password:
         from_secret: docker-password
-    when:
-      branch:
-      - main
