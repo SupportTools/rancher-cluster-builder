@@ -50,6 +50,7 @@ push-files-to-s3() {
 }
 
 rolling_reboot() {
+  pull-files-from-s3
   cd "$CWD"/clusters/"$Cluster"
   export KUBECONFIG=./kube_config_cluster.yml
   for node in `kubectl get nodes -o name | awk -F'/' '{print $2}'`
@@ -65,9 +66,9 @@ rolling_reboot() {
       echo "Sleeping..."
       sleep 360
       echo "Updating..."
-      ssh root@"$node" 'apt update -y && apt upgrade -y'
+      ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$node" 'apt update -y && apt upgrade -y'
       echo "Rebooting..."
-      ssh root@"$node" 'reboot'
+      ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$node" 'reboot'
       echo "Sleeping..."
       sleep 360
       echo "Waiting for ping..."
@@ -77,13 +78,13 @@ rolling_reboot() {
         sleep 1
       done
       echo "Waiting for SSH..."
-      while ! ssh root@"$node" "uptime"
+      while ! ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$node" "uptime"
       do
         echo "Waiting..."
         sleep 1
       done
       echo "Waiting for docker..."
-      while ! ssh root@"$node" "docker ps"
+      while ! ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$node" "docker ps"
       do
         echo "Waiting..."
         sleep 1
@@ -108,6 +109,7 @@ rolling_reboot() {
        kubectl uncordon "$node"
     fi
   done
+  push-files-to-s3
 }
 
 cluster_up() {
