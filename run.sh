@@ -128,6 +128,18 @@ rolling_reboot() {
   done
   push-files-to-s3
 }
+etcd_snapshot() {
+  if [[ ! -z "$1" ]]
+  then
+    SnapshotName=$1
+  else
+    SnapshotName="builder-"`date "+%Y-%m-%d-%H-%M-%S"`
+  fi
+  cd "$CWD"/clusters/"$Cluster"
+  techo "Taking etcd snapshot"
+  techo "Snapshot Name: $SnapshotName"
+  rke etcd snapshot-save --name "$SnapshotName" --config cluster.yml
+}
 cluster_up() {
   pull-files-from-s3 $Cluster
   cd "$CWD"/clusters/"$Cluster"
@@ -150,6 +162,47 @@ cluster_delete() {
     rke remove --config cluster.yml
   fi
   push-files-to-s3 $Cluster
+}
+rancher_up() {
+  techo "Taking per upgrade/install snapshot"
+  SnapshotName="rancher-preupgrade-"`date "+%Y-%m-%d-%H-%M-%S"`
+  etcd_snapshot $SnapshotName
+  RC=$?
+  if [ $RC -ne 0 ]
+  then
+    techo "etcd snapshot failed, canceling to Rancher Upgrade/Install"
+    exit 6
+  else
+    techo "etcd snapshot was successful, processing to Rancher Upgrade/Install"
+  fi
+  techo "Adding Rancher helm repos"
+  helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
+  helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+  helm repo add rancher-alpha https://releases.rancher.com/server-charts/alpha
+  techo "Fetching charts"
+  helm fetch rancher-latest/rancher
+  helm fetch rancher-stable/rancher
+  helm fetch rancher-alpha/rancher
+  techo "Verifing cluster access"
+  export KUBECONFIG=kube_config_cluster.yml
+  kubectl get nodes -o wide
+  RC=$?
+  if [ $RC -ne 0 ]
+  then
+    techo "Access failed, canceling to Rancher Upgrade/Install"
+    exit 7
+  fi
+  techo "Creating cattle-system namespace"
+  kubectl create namespace cattle-system --dry-run=client -o yaml | kubectl apply -f -
+  techo "Setup TLS certs"
+  if [[ -f tls.crt ]] && [[ -f tls.key ]]
+  then
+    techo "Adding tls.crt and tls.key from s3"
+    kubectl -n cattle-system create secret tls tls-rancher-ingress --cert=tls.crt --key=tls.key --dry-run=client -o yaml | kubectl apply -f -
+  elif [[ condition ]]
+  then
+    #statements
+  fi
 }
 
 #### Starting Main
