@@ -2,11 +2,9 @@
 timestamp() {
   date "+%Y-%m-%d %H:%M:%S"
 }
-
 techo() {
   echo "$(timestamp): $*"
 }
-
 decho() {
   if [[ ! -z $DEBUG ]]
   then
@@ -27,7 +25,6 @@ setup-ssh() {
 }
 
 verify-files() {
-  Cluster=$1
   if [[ "$DEBUG" == "true" ]]
   then
     ls -lh $CWD"/clusters/"$Cluster
@@ -45,17 +42,14 @@ verify-files() {
 }
 
 pull-files-from-s3() {
-  Cluster=$1
   aws s3 sync --exclude="cluster.yml" s3://"$S3_BUCKET"/clusters/"$Cluster"/ "$CWD"/clusters/"$Cluster"/
 }
 
 push-files-to-s3() {
-  Cluster=$1
   aws s3 sync "$CWD"/clusters/"$Cluster"/ s3://"$S3_BUCKET"/clusters/"$Cluster"/
 }
 
 rolling_reboot() {
-  Cluster=$1
   cd "$CWD"/clusters/"$Cluster"
   export KUBECONFIG=./kube_config_cluster.yml
   for node in `kubectl get nodes -o name | awk -F'/' '{print $2}'`
@@ -117,7 +111,6 @@ rolling_reboot() {
 }
 
 cluster_up() {
-  Cluster=$1
   pull-files-from-s3 $Cluster
   cd "$CWD"/clusters/"$Cluster"
   rke up --config cluster.yml
@@ -125,7 +118,6 @@ cluster_up() {
 }
 
 cluster_new() {
-  Cluster=$1
   cd "$CWD"/clusters/"$Cluster"
   rke up --config cluster.yml
   push-files-to-s3 $Cluster
