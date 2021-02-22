@@ -163,7 +163,16 @@ verify-files
 
 if [[ "$Action" == "cluster_up" ]]
 then
-  cluster_up
+  if [[ "$Cluster" == "all" ]]
+  then
+    for Cluster in `ls ./clusters`
+    do
+      techo "Cluster: $Cluster"
+      cluster_up
+    done
+  else
+    cluster_up
+  fi
 elif [[ "$Action" == "cluster_delete" ]]
 then
   cluster_delete
