@@ -20,4 +20,3 @@ steps:
         from_secret: S3_BUCKET
     commands:
       - ls -lh
-      - bash ~/run.sh
