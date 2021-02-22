@@ -122,6 +122,18 @@ cluster_up() {
   push-files-to-s3 $Cluster
 }
 
+cluster_delete() {
+  pull-files-from-s3 $Cluster
+  cd "$CWD"/clusters/"$Cluster"
+  if [[ "$DEBUG" == "true" ]]
+  then
+    rke remove --debug --config cluster.yml
+  else
+    rke remove --config cluster.yml
+  fi
+  push-files-to-s3 $Cluster
+}
+
 #### Starting Main
 
 if [[ -z $Action ]] || [[ -z $Cluster ]]
@@ -135,6 +147,9 @@ verify-files
 if [[ "$Action" == "cluster_up" ]]
 then
   cluster_up
+elif [[ "$Action" == "cluster_delete" ]]
+then
+  cluster_delete
 elif [[ "$Action" == "rolling_reboot" ]]
 then
   rolling_reboot
