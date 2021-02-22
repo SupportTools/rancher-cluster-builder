@@ -46,7 +46,7 @@ pull-files-from-s3() {
 }
 
 push-files-to-s3() {
-  aws s3 sync "$CWD"/clusters/"$Cluster"/ s3://"$S3_BUCKET"/clusters/"$Cluster"/
+  aws s3 sync --exclude="cluster.yml" "$CWD"/clusters/"$Cluster"/ s3://"$S3_BUCKET"/clusters/"$Cluster"/
 }
 
 rolling_reboot() {
