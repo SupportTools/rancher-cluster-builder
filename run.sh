@@ -116,12 +116,12 @@ cluster_new() {
 
 #### Starting Main
 
-setup-ssh
 if [[ -z $Action ]] || [[ -z $Cluster ]]
 then
   echo "Action and Cluster must be set"
   exit 0
 fi
+setup-ssh
 verify-files
 
 if [[ "$Action" == "cluster_up" ]]
