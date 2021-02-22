@@ -32,4 +32,4 @@ steps:
       S3_BUCKET:
         from_secret: S3_BUCKET
     commands:
-      - mkdir /root/.ssh && echo "$SSH_KEY" > /root/.ssh/id_rsa && chmod 0600 /root/.ssh/id_rsa
+      - bash ~/run.sh
