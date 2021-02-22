@@ -97,7 +97,7 @@ mkdir /root/.ssh && echo "$SSH_KEY" > /root/.ssh/id_rsa && chmod 0600 /root/.ssh
 if [[ -z $Action ]] || [[ -z $Cluster ]]
 then
   echo "Action and Cluster must be set"
-  exit 1
+  exit 0
 fi
 
 if [[ ! -d "$CWD"/clusters/"$Cluster" ]]
