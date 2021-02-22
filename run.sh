@@ -26,12 +26,12 @@ verify-files() {
   then
     ls -lh $CWD"/clusters/"$Cluster
   fi
-  if [[ ! -d "$CWD"/clusters/"$Cluster" ]]
+  if [[ ! -d "$CWD"/clusters/"$Cluster" ]] && [[ ! "$Cluster" == "all" ]]
   then
     echo "Cluster folder is missing"
     exit 2
   fi
-  if [[ ! -f "$CWD"/clusters/"$Cluster"/cluster.yml ]]
+  if [[ ! -f "$CWD"/clusters/"$Cluster"/cluster.yml ]] && [[ ! "$Cluster" == "all" ]]
   then
     echo "cluster.yml is missing"
     exit 3
