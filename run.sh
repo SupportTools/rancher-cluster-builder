@@ -1,4 +1,5 @@
 #!/bin/bash
+CWD=`pwd`
 timestamp() {
   date "+%Y-%m-%d %H:%M:%S"
 }
@@ -11,9 +12,6 @@ decho() {
     techo "$*"
   fi
 }
-
-CWD=`pwd`
-
 setup-ssh() {
   echo "Setting up SSH key..."
   if [[ -z $SSH_KEY ]]
@@ -23,7 +21,6 @@ setup-ssh() {
   fi
   mkdir /root/.ssh && echo "$SSH_KEY" > /root/.ssh/id_rsa && chmod 0600 /root/.ssh/id_rsa
 }
-
 verify-files() {
   if [[ "$DEBUG" == "true" ]]
   then
@@ -40,15 +37,35 @@ verify-files() {
     exit 3
   fi
 }
-
 pull-files-from-s3() {
   aws s3 sync --exclude="cluster.yml" --endpoint-url="$S3_ENDPOINT" s3://"$S3_BUCKET"/clusters/"$Cluster"/ "$CWD"/clusters/"$Cluster"/
 }
-
 push-files-to-s3() {
-  aws s3 sync --exclude="cluster.yml" --endpoint-url="$S3_ENDPOINT" "$CWD"/clusters/"$Cluster"/ s3://"$S3_BUCKET"/clusters/"$Cluster"/
+  aws s3 sync --endpoint-url="$S3_ENDPOINT" "$CWD"/clusters/"$Cluster"/ s3://"$S3_BUCKET"/clusters/"$Cluster"/
 }
-
+update-creds-in-cluster-yml() {
+  cd "$CWD"/clusters/"$Cluster"
+  if [[ -f ./creds ]]
+  then
+    techo "Found creds file, updating cluster.yml"
+    for line in `cat ./creds`
+    do
+      find=`echo $line | awk -F '=' '{print $1}'`
+      replace=`echo $line | awk -F '=' '{print $2}'`
+      techo "Find and replacing value for $find"
+      cat cluster.yml | sed "s|${find}|${replace}|g" > cluster.tmp
+      if [[ -z cluster.tmp ]]
+      then
+        echo "Problem"
+        exit 5
+      fi
+      mv cluster.tmp cluster.yml
+    done
+    techo "Updated creds in cluster.yml"
+  else
+    techo "No creds file, skipping"
+  fi
+}
 rolling_reboot() {
   pull-files-from-s3
   cd "$CWD"/clusters/"$Cluster"
@@ -111,10 +128,10 @@ rolling_reboot() {
   done
   push-files-to-s3
 }
-
 cluster_up() {
   pull-files-from-s3 $Cluster
   cd "$CWD"/clusters/"$Cluster"
+  update-creds-in-cluster-yml
   if [[ "$DEBUG" == "true" ]]
   then
     rke up --debug --config cluster.yml
@@ -123,7 +140,6 @@ cluster_up() {
   fi
   push-files-to-s3 $Cluster
 }
-
 cluster_delete() {
   pull-files-from-s3 $Cluster
   cd "$CWD"/clusters/"$Cluster"
@@ -137,10 +153,9 @@ cluster_delete() {
 }
 
 #### Starting Main
-
-if [[ -z $Action ]] || [[ -z $Cluster ]]
+if [[ -z $Action ]]
 then
-  echo "Action and Cluster must be set"
+  echo "Action must be set"
   exit 0
 fi
 setup-ssh
@@ -148,7 +163,16 @@ verify-files
 
 if [[ "$Action" == "cluster_up" ]]
 then
-  cluster_up
+  if [[ "$Cluster" == "all" ]]
+  then
+    for Cluster in `ls ./clusters`
+    do
+      techo "Cluster: $Cluster"
+      cluster_up
+    done
+  else
+    cluster_up
+  fi
 elif [[ "$Action" == "cluster_delete" ]]
 then
   cluster_delete
