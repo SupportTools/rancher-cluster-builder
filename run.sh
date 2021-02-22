@@ -42,11 +42,11 @@ verify-files() {
 }
 
 pull-files-from-s3() {
-  aws s3 sync --exclude="cluster.yml" s3://"$S3_BUCKET"/clusters/"$Cluster"/ "$CWD"/clusters/"$Cluster"/
+  aws s3 sync --exclude="cluster.yml" --endpoint-url="$S3_ENDPOINT" s3://"$S3_BUCKET"/clusters/"$Cluster"/ "$CWD"/clusters/"$Cluster"/
 }
 
 push-files-to-s3() {
-  aws s3 sync --exclude="cluster.yml" "$CWD"/clusters/"$Cluster"/ s3://"$S3_BUCKET"/clusters/"$Cluster"/
+  aws s3 sync --exclude="cluster.yml" --endpoint-url="$S3_ENDPOINT" "$CWD"/clusters/"$Cluster"/ s3://"$S3_BUCKET"/clusters/"$Cluster"/
 }
 
 rolling_reboot() {
