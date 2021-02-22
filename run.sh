@@ -2,12 +2,37 @@
 
 CWD=`pwd`
 
+setup-ssh() {
+  echo "Setting up SSH key..."
+  if [[ -z $SSH_KEY ]]
+  then
+    echo "SSH Key is missing"
+    exit 1
+  fi
+  mkdir /root/.ssh && echo "$SSH_KEY" > /root/.ssh/id_rsa && chmod 0600 /root/.ssh/id_rsa
+}
+
+verify-files() {
+  Cluster=$1
+  if [[ ! -d "$CWD"/clusters/"$Cluster" ]]
+  then
+    echo "Cluster folder is missing"
+    exit 2
+  fi
+
+  if [[ ! -f "$CWD"/clusters/cluster.yml ]]
+  then
+    echo "cluster.yml is missing"
+    exit 3
+  fi
+}
+
 pull-files-from-s3() {
   Cluster=$1
   aws s3 sync --exclude="cluster.yml" s3://"$S3_BUCKET"/clusters/"$Cluster"/ "$CWD"/clusters/"$Cluster"/
 }
 
-push-files-from-s3() {
+push-files-to-s3() {
   Cluster=$1
   aws s3 sync "$CWD"/clusters/"$Cluster"/ s3://"$S3_BUCKET"/clusters/"$Cluster"/
 }
@@ -76,41 +101,28 @@ rolling_reboot() {
 
 cluster_up() {
   Cluster=$1
+  pull-files-from-s3 $Cluster
   cd "$CWD"/clusters/"$Cluster"
   rke up --config cluster.yml
+  push-files-to-s3 $Cluster
 }
 
 cluster_new() {
   Cluster=$1
   cd "$CWD"/clusters/"$Cluster"
   rke up --config cluster.yml
+  push-files-to-s3 $Cluster
 }
 
-echo "Setting up SSH key..."
-if [[ -z $SSH_KEY ]]
-then
-  echo "SSH Key is missing"
-  exit 1
-fi
-mkdir /root/.ssh && echo "$SSH_KEY" > /root/.ssh/id_rsa && chmod 0600 /root/.ssh/id_rsa
+#### Starting Main
 
+setup-ssh
 if [[ -z $Action ]] || [[ -z $Cluster ]]
 then
   echo "Action and Cluster must be set"
   exit 0
 fi
-
-if [[ ! -d "$CWD"/clusters/"$Cluster" ]]
-then
-  echo "Cluster folder is missing"
-  exit 2
-fi
-
-if [[ ! -f "$CWD"/clusters/cluster.yml ]]
-then
-  echo "cluster.yml is missing"
-  exit 3
-fi
+verify-files
 
 if [[ "$Action" == "cluster_up" ]]
 then
