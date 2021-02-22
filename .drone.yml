@@ -3,6 +3,9 @@ kind: pipeline
 type: kubernetes
 name: Rancher-Cluster-Builder
 
+concurrency:
+  limit: 1
+  
 steps:
   - name: Builder
     image: supporttools/rancher-cluster-builder:latest
