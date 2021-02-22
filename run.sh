@@ -194,7 +194,7 @@ rancher_up() {
   fi
   techo "Creating cattle-system namespace"
   kubectl create namespace cattle-system --dry-run=client -o yaml | kubectl apply -f -
-  techo "Setup TLS certs"
+  techo "Setting up certs"
   if [[ -f tls.crt ]] && [[ -f tls.key ]]
   then
     techo "Adding tls.crt and tls.key from s3"
