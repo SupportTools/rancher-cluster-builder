@@ -1,5 +1,4 @@
 #!/bin/bash
-Cluster=$Environment
 timestamp() {
   date "+%Y-%m-%d %H:%M:%S"
 }
