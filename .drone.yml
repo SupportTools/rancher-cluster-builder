@@ -11,6 +11,7 @@ steps:
       tags:
         - ${DRONE_BUILD_NUMBER}
         - latest
+      cache_from: supporttools/rancher-cluster-builder:latest
       username:
         from_secret: docker-username
       password:
