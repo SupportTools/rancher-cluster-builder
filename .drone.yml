@@ -19,4 +19,5 @@ steps:
       S3_BUCKET:
         from_secret: S3_BUCKET
     commands:
-      - bash ./run.sh
+      - ls -lh
+      - bash ~/run.sh
