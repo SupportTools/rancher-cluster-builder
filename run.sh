@@ -48,7 +48,7 @@ update-creds-in-cluster-yml() {
   if [[ -f ./creds ]]
   then
     techo "Found creds file, updating cluster.yml"
-    for line in `cat ./creds`
+    while read line;
     do
       find=`echo $line | awk -F '=' '{print $1}'`
       replace=`echo $line | awk -F '=' '{print $2}'`
@@ -60,7 +60,7 @@ update-creds-in-cluster-yml() {
         exit 5
       fi
       mv cluster.tmp cluster.yml
-    done
+    done < ./creds
     techo "Updated creds in cluster.yml"
   else
     techo "No creds file, skipping"
