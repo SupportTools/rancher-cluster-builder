@@ -17,7 +17,7 @@ steps:
       password:
         from_secret: docker-password
 
-  - name: Test-SSH
+  - name: Run-Builder
     image: supporttools/rancher-cluster-builder:${DRONE_BUILD_NUMBER}
     pull: true
     environment:
