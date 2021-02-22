@@ -199,9 +199,6 @@ rancher_up() {
   then
     techo "Adding tls.crt and tls.key from s3"
     kubectl -n cattle-system create secret tls tls-rancher-ingress --cert=tls.crt --key=tls.key --dry-run=client -o yaml | kubectl apply -f -
-  elif [[ condition ]]
-  then
-    #statements
   fi
 }
 
