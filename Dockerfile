@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
     curl \
     python3-pip \
     awscli \
+    openssh-client \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ## Install kubectl
