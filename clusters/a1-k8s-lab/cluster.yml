@@ -64,3 +64,5 @@ dns:
   upstreamnameservers:
   - 172.27.2.23
   - 172.27.2.24
+
+kubernetes_version: "v1.19.7-rancher1-1"
