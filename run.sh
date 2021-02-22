@@ -1,4 +1,18 @@
 #!/bin/bash
+timestamp() {
+  date "+%Y-%m-%d %H:%M:%S"
+}
+
+techo() {
+  echo "$(timestamp): $*"
+}
+
+decho() {
+  if [[ ! -z $DEBUG ]]
+  then
+    techo "$*"
+  fi
+}
 
 CWD=`pwd`
 
@@ -14,13 +28,16 @@ setup-ssh() {
 
 verify-files() {
   Cluster=$1
+  if [[ "$DEBUG" == "true" ]]
+  then
+    ls -lh $CWD"/clusters/"$Cluster
+  fi
   if [[ ! -d "$CWD"/clusters/"$Cluster" ]]
   then
     echo "Cluster folder is missing"
     exit 2
   fi
-
-  if [[ ! -f "$CWD"/clusters/cluster.yml ]]
+  if [[ ! -f "$CWD"/clusters/"$Cluster"/cluster.yml ]]
   then
     echo "cluster.yml is missing"
     exit 3
