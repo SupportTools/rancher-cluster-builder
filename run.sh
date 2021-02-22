@@ -1,6 +1,8 @@
 #!/bin/bash
 
 rolling-reboot() {
+  Cluster=$1
+  cd ~/clusters/"$Cluster"
   export KUBECONFIG=./kube_config_cluster.yml
   for node in `kubectl get nodes -o name | awk -F'/' '{print $2}'`
   do
