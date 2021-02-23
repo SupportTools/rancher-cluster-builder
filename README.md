@@ -1,6 +1,7 @@
 [![Build Status](https://drone.support.tools/api/badges/SupportTools/rancher-cluster-builder/status.svg)](https://drone.support.tools/SupportTools/rancher-cluster-builder)
-[![Pulls](https://img.shields.io/docker/pulls/supporttools/rancher-cluster-builder.svg)](https://hub.docker.com/r/supporttools/rancher-cluster-builder)
 [![Twitter](https://img.shields.io/twitter/follow/cube8021?style=social&logo=twitter)](https://twitter.com/cube8021)
+[![Pulls](https://img.shields.io/docker/pulls/supporttools/rancher-cluster-builder.svg)](https://hub.docker.com/r/supporttools/rancher-cluster-builder)
+![Image](https://img.shields.io/docker/image-size/supporttools/rancher-cluster-builder)
 
 Rancher-Clusters-Builder
 ========================
