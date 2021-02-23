@@ -230,6 +230,7 @@ elif [[ "$Action" == "rolling_reboot" ]]
 then
   rolling_reboot
 else
-  echo "Unknown Action"
+  techo "Action: $Action"
+  techo "Unknown Action"
   exit 254
 fi
