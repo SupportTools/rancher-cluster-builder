@@ -3,7 +3,7 @@
 [![Pulls](https://img.shields.io/docker/pulls/supporttools/rancher-cluster-builder.svg)](https://hub.docker.com/r/supporttools/rancher-cluster-builder)
 ![Image](https://img.shields.io/docker/image-size/supporttools/rancher-cluster-builder)
 
-Rancher-Clusters-Builder
+Rancher Clusters Builder
 ========================
 
 The rancher-clusters-builder is designed to manage RKE clusters (mainly Rancher local clusters) using a drone as the CICD pipeline, GitHub as the code repository, and Wasabisys's S3 storage for storing the artifacts from the build process.
