@@ -1,33 +1,49 @@
-# rancher-clusters-builder
 [![Build Status](https://drone.support.tools/api/badges/SupportTools/rancher-cluster-builder/status.svg)](https://drone.support.tools/SupportTools/rancher-cluster-builder)
+[![Twitter](https://img.shields.io/twitter/follow/cube8021?style=social&logo=twitter)](https://twitter.com/cube8021)
+[![Pulls](https://img.shields.io/docker/pulls/supporttools/rancher-cluster-builder.svg)](https://hub.docker.com/r/supporttools/rancher-cluster-builder)
+![Image](https://img.shields.io/docker/image-size/supporttools/rancher-cluster-builder)
 
-## Overview
+Rancher Clusters Builder
+========================
+
 The rancher-clusters-builder is designed to manage RKE clusters (mainly Rancher local clusters) using a drone as the CICD pipeline, GitHub as the code repository, and Wasabisys's S3 storage for storing the artifacts from the build process.
 
 ## Required Drone secrets
 - S3_ACCESSKEY
   This should be the plaintext access key for accessing the S3 bucket.
+  ```
   Example: AKIAIOSFODNN7EXAMPLE
+  ```
 
 - S3_SECRETKEY
   This should be the plaintext secret key for accessing the S3 bucket.
+  ```
   Example: wJalrXUtnFEMI/K7MDENG/bPxRfiCEXAMPLEKEY
+  ```
 
 - S3_BUCKET
   This should be the S3 bucket name for storing the artifacts (cluster.rkestate, kube_config_cluster.yml, tls.crt, tls.key)
+  ```
   Example: rancher-clusters
+  ```
 
 - S3_ENDPOINT
   This should be the S3 API endpoint. This is optional is using AWS S3.
+  ```
   Example: https://s3.us-central-1.wasabisys.com
+  ```
 
 - S3_REGION
   This should be the region for the S3 bucket.
+  ```
   Example: us-east-1
+  ```
 
 - ssh_key
   This should be the plaintext SSH private key for accessing the RKE nodes.
+  ```
   Example: `-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1r......\n-----END OPENSSH PRIVATE KEY-----`
+  ```
 
 ## Adding a cluster
 Before starting, we'll assume that the Servers in this cluster have been built and have docker installed. To add a cluster to the pipeline, you must create a folder in `clusters`; this folder name will be the cluster's name. So please try not to use any control characters or spaces in the name. Inside that folder, we'll need to create the cluster.yml using the template file provided in `clusters/template.` To protect for storing passwords in git; we use the file `creds` (An example can be found in `s3-template/creds`) to find and replace the values. Note, the creds file should be stored in S3 in the folder `clusters/ClusterName/creds.` Once the files have been created and committed to the repository. The drone build runs a basic test on the main build script, `run.sh`. Then to build the cluster, we'll promote the drone build using the following options.
