@@ -174,6 +174,7 @@ install_cert-manager() {
   --version v1.0.4
 }
 rancher_up() {
+  cd "$CWD"/clusters/"$Cluster"
   techo "Checking for rancher-values.yaml"
   if [[ ! -f rancher-values.yaml ]]
   then
