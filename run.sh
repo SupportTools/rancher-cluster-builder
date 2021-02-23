@@ -275,8 +275,13 @@ then
   then
     for Cluster in `ls ./clusters`
     do
-      techo "Cluster: $Cluster"
-      cluster_up
+      if [[ ! "$Cluster" == "template" ]]
+      then
+        techo "Cluster: $Cluster"
+        cluster_up
+      else
+        techo "Skipping template"
+      fi
     done
   else
     cluster_up
