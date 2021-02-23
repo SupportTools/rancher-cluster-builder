@@ -1,0 +1,13 @@
+s3backupconfig.access_key=AAA
+s3backupconfig.secret_key=BBBBBBB
+s3backupconfig.bucket_name=etcd-backups
+s3backupconfig.folder=cluster-name
+s3backupconfig.endpoint=s3.url.example.com
+s3backupconfig.region=us-west-1
+cloud_provider.virtual_center=vcenter.example.com
+cloud_provider.datacenters=/Datacenter-Example
+cloud_provider.port=443
+cloud_provider.username=serviceaccount
+cloud_provider.password=Passw0rd
+cloud_provider.default-datastore=/Datacenter-Example/datastore/datastore01
+cloud_provider.folder=cluster-name

@@ -1,0 +1,59 @@
+nodes:
+  - address: 1.1.1.1
+    user: root
+    hostname_override: node01
+    role: [controlplane,worker,etcd]
+  - address: 2.2.2.2
+    user: root
+    hostname_override: node02
+    role: [controlplane,worker,etcd]
+  - address: 3.3.3.3
+    user: root
+    hostname_override: node03
+    role: [controlplane,worker,etcd]
+
+ingress:
+  provider: nginx
+
+services:
+  etcd:
+    backup_config:
+      enabled: true     # enables recurring etcd snapshots
+      interval_hours: 12 # time increment between snapshots
+      retention: 7     # time in days before snapshot purge
+      s3backupconfig:
+        access_key: "s3backupconfig.access_key"
+        secret_key:  "s3backupconfig.secret_key"
+        bucket_name: "s3backupconfig.bucket_name"
+        folder: "s3backupconfig.folder"
+        endpoint: "s3backupconfig.endpoint"
+        region: "s3backupconfig.region"
+
+cloud_provider:
+  name: vsphere
+  vsphereCloudProvider:
+    disk: {}
+    global:
+      insecure-flag: true
+      soap-roundtrip-count: 0
+    network: {}
+    virtual_center:
+      cloud_provider.virtual_center:
+        datacenters: cloud_provider.datacenters
+        port: cloud_provider.port
+        soap-roundtrip-count: 0
+        user: cloud_provider.username
+        password: cloud_provider.password
+    workspace:
+      datacenter: cloud_provider.datacenters
+      default-datastore: cloud_provider.default-datastore
+      folder: cloud_provider.folder
+      server: cloud_provider.virtual_center
+
+dns:
+  provider: coredns
+  upstreamnameservers:
+  - 1.1.1.1
+  - 1.0.0.1
+
+kubernetes_version: v1.19.7-rancher1-1

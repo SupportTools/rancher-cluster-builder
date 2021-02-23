@@ -1,0 +1,9 @@
+antiAffinity: required
+auditLog:
+  level: 2
+hostname: rancher.example.com
+ingress:
+  tls:
+    source: secret
+rancher_verison: 2.5.5
+rancher_chart: rancher-latest/rancher
