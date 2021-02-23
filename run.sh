@@ -181,6 +181,7 @@ rancher_up() {
     techo "Missing rancher-values.yaml, canceling to Rancher Upgrade/Install"
     exit 8
   fi
+  update-creds-in-cluster-yml
   techo "Taking per upgrade/install snapshot"
   SnapshotName="rancher-preupgrade-"`date "+%Y-%m-%d-%H-%M-%S"`
   etcd_snapshot $SnapshotName
