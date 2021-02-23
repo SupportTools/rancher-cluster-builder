@@ -10,7 +10,9 @@ The rancher-clusters-builder is designed to manage RKE clusters (mainly Rancher 
 ## Required Drone secrets
 - S3_ACCESSKEY
   This should be the plaintext access key for accessing the S3 bucket.
+  ```
   Example: AKIAIOSFODNN7EXAMPLE
+  ```
 
 - S3_SECRETKEY
   This should be the plaintext secret key for accessing the S3 bucket.
