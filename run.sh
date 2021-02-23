@@ -163,7 +163,23 @@ cluster_delete() {
   fi
   push-files-to-s3 $Cluster
 }
+install_cert-manager() {
+  kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.0.4/cert-manager.crds.yaml
+  kubectl create namespace cert-manager --dry-run=client -o yaml | kubectl apply -f -
+  helm repo add jetstack https://charts.jetstack.io
+  helm repo update
+  helm upgrade --install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --version v1.0.4
+}
 rancher_up() {
+  techo "Checking for rancher-values.yaml"
+  if [[ ! -f rancher-values.yaml ]]
+  then
+    techo "Missing rancher-values.yaml, canceling to Rancher Upgrade/Install"
+    exit 8
+  fi
   techo "Taking per upgrade/install snapshot"
   SnapshotName="rancher-preupgrade-"`date "+%Y-%m-%d-%H-%M-%S"`
   etcd_snapshot $SnapshotName
@@ -175,14 +191,6 @@ rancher_up() {
   else
     techo "etcd snapshot was successful, processing to Rancher Upgrade/Install"
   fi
-  techo "Adding Rancher helm repos"
-  helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
-  helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
-  helm repo add rancher-alpha https://releases.rancher.com/server-charts/alpha
-  techo "Fetching charts"
-  helm fetch rancher-latest/rancher
-  helm fetch rancher-stable/rancher
-  helm fetch rancher-alpha/rancher
   techo "Verifing cluster access"
   export KUBECONFIG=kube_config_cluster.yml
   kubectl get nodes -o wide
@@ -195,10 +203,58 @@ rancher_up() {
   techo "Creating cattle-system namespace"
   kubectl create namespace cattle-system --dry-run=client -o yaml | kubectl apply -f -
   techo "Setting up certs"
-  if [[ -f tls.crt ]] && [[ -f tls.key ]]
+  if cat ./rancher-values.yaml | grep -A 3 'ingress' | grep 'source: secret'
   then
-    techo "Adding tls.crt and tls.key from s3"
-    kubectl -n cattle-system create secret tls tls-rancher-ingress --cert=tls.crt --key=tls.key --dry-run=client -o yaml | kubectl apply -f -
+    techo "Certificates from Files"
+    if [[ -f tls.crt ]] && [[ -f tls.key ]]
+    then
+      techo "Adding tls.crt and tls.key from s3"
+      kubectl -n cattle-system create secret tls tls-rancher-ingress --cert=tls.crt --key=tls.key --dry-run=client -o yaml | kubectl apply -f -
+    else
+      techo "Missing tls.crt and tls.key, canceling to Rancher Upgrade/Install"
+      exit 9
+    fi
+  elif cat ./rancher-values.yaml | grep -A 3 'ingress' | grep 'source: letsEncrypt'
+  then
+    techo "Let’s Encrypt configured, installing cert-manager"
+    install_cert-manager
+  else
+    techo "Rancher Generated Certificates (Default) configured, installing cert-manager"
+    install_cert-manager
+  fi
+  techo "Adding Rancher helm repos"
+  RancherChart=`cat ./rancher-values.yaml | grep 'rancher_chart:' | awk '{print $2}'`
+  RancherChartUrlEnd=`echo $RancherChart | awk -F '-' '{print $2}'`
+  if [[ -z $RancherChart ]]
+  then
+    RancherChart="rancher-latest"
+    RancherChartUrlEnd="latest"
+  fi
+  helm repo add "$RancherChart" https://releases.rancher.com/server-charts/"$RancherChartUrlEnd"
+  techo "Fetching charts"
+  helm fetch "$RancherChart"/rancher
+  techo "Deploying Rancher"
+  RancherVerison=`cat ./rancher-values.yaml | grep 'rancher_verison:' | awk '{print $2}'`
+  if [[ -z $RancherVerison ]]
+  then
+    techo "Installing/Upgrading Rancher to latest"
+    helm upgrade --install rancher "$RancherChart" --namespace cattle-system -f values.yaml
+  else
+    techo "Installing/Upgrading Rancher to $RancherVerison"
+    helm upgrade --install rancher "$RancherChart" --namespace cattle-system -f values.yaml --version "$RancherVerison"
+  fi
+  techo "Waiting for Rancher to be rolled out"
+  kubectl -n cattle-system rollout status deploy/rancher -w
+  techo "Taking post upgrade/install snapshot"
+  SnapshotName="rancher-postupgrade-"`date "+%Y-%m-%d-%H-%M-%S"`
+  etcd_snapshot $SnapshotName
+  RC=$?
+  if [ $RC -ne 0 ]
+  then
+    techo "etcd snapshot failed"
+    exit 10
+  else
+    techo "etcd snapshot was successful"
   fi
 }
 
@@ -229,6 +285,9 @@ then
 elif [[ "$Action" == "rolling_reboot" ]]
 then
   rolling_reboot
+elif [[ "$Action" == "rancher_up" ]]
+then
+  rancher_up
 else
   techo "Action: $Action"
   techo "Unknown Action"
