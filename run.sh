@@ -85,7 +85,8 @@ rolling_reboot() {
     then
       echo "Cordoning node..."
       kubectl cordon "$node"
-      kubectl drain "$node" --ignore-daemonsets --delete-local-data --force --grace-period=60
+      ## Skipping drain to speed up rolling reboot
+      #kubectl drain "$node" --ignore-daemonsets --delete-local-data --force --grace-period=60
       echo "Updating..."
       ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$ipaddress" 'apt update -y && apt upgrade -y; reboot'
       echo "Rebooting..."
