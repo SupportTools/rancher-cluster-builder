@@ -80,22 +80,12 @@ rolling_reboot() {
       echo "Cordoning node..."
       kubectl cordon "$node"
       kubectl drain "$node" --ignore-daemonsets --delete-local-data --force --grace-period=900
-      echo "Sleeping..."
-      sleep 360
       echo "Updating..."
-      ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$node" 'apt update -y && apt upgrade -y'
+      ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$node" 'apt update -y && apt upgrade -y; reboot'
       echo "Rebooting..."
-      ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$node" 'reboot'
-      echo "Sleeping..."
-      sleep 360
+      sleep 30
       echo "Waiting for ping..."
       while ! ping -c 1 $node
-      do
-        echo "Waiting..."
-        sleep 1
-      done
-      echo "Waiting for SSH..."
-      while ! ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$node" "uptime"
       do
         echo "Waiting..."
         sleep 1
@@ -106,20 +96,14 @@ rolling_reboot() {
         echo "Waiting..."
         sleep 1
       done
-      echo "Sleeping..."
-      sleep 360
       echo "Waiting for node ready..."
       while ! kubectl get nodes "$node" | tail -n1 | awk '{print $2}' | grep "Ready"
       do
         echo "Waiting..."
         sleep 1
       done
-      echo "Sleeping..."
-      sleep 360
       echo "Uncordoning node..."
       kubectl uncordon "$node"
-      echo "Sleeping..."
-      sleep 360
       rke up
     else
        echo "Uncordoning node..."
