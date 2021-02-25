@@ -73,6 +73,8 @@ rolling_reboot() {
   for node in `kubectl get nodes -o name | awk -F'/' '{print $2}'`
   do
     echo "Node: $node"
+    ipaddress=`kubectl get nodes --selector=kubernetes.io/hostname=$node -o jsonpath={.items[*].status.addresses[?\(@.type==\"ExternalIP\"\)].address}`
+    echo "IpAddress: $ipaddress"
     status=`kubectl get nodes "$node" | tail -n1 | awk '{print $2}'`
     echo "Checking if node is ready..."
     if [[ "$status" == "Ready" ]]
@@ -81,17 +83,17 @@ rolling_reboot() {
       kubectl cordon "$node"
       kubectl drain "$node" --ignore-daemonsets --delete-local-data --force --grace-period=900
       echo "Updating..."
-      ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$node" 'apt update -y && apt upgrade -y; reboot'
+      ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$ipaddress" 'apt update -y && apt upgrade -y; reboot'
       echo "Rebooting..."
       sleep 30
       echo "Waiting for ping..."
-      while ! ping -c 1 $node
+      while ! ping -c 1 $ipaddress
       do
         echo "Waiting..."
         sleep 1
       done
       echo "Waiting for docker..."
-      while ! ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$node" "docker ps"
+      while ! ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$ipaddress" "docker ps"
       do
         echo "Waiting..."
         sleep 1
