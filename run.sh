@@ -73,7 +73,11 @@ rolling_reboot() {
   for node in `kubectl get nodes -o name | awk -F'/' '{print $2}'`
   do
     echo "Node: $node"
-    ipaddress=`kubectl get nodes --selector=kubernetes.io/hostname=$node -o jsonpath={.items[*].status.addresses[?\(@.type==\"ExternalIP\"\)].address}`
+    ipaddress=`kubectl get node $node -o jsonpath='{.metadata.annotations.rke\.cattle\.io/external-ip}'`
+    if [[ -z $ipaddress ]]
+    then
+      ipaddress=`kubectl get node $node -o jsonpath='{.metadata.annotations.rke\.cattle\.io/internal-ip}'`
+    fi
     echo "IpAddress: $ipaddress"
     status=`kubectl get nodes "$node" | tail -n1 | awk '{print $2}'`
     echo "Checking if node is ready..."
