@@ -40,9 +40,34 @@ nodes:
     hostname_override: a1ubk8si03
     internal_address: 172.27.2.35
     role: [controlplane,worker,etcd]
+  - address: 172.27.2.36
+    user: root
+    hostname_override: a1ublbi01
+    internal_address: 172.27.2.36
+    role: [worker]
+    labels:
+      app: ingress
+  - address: 172.27.2.37
+    user: root
+    hostname_override: a1ublbi02
+    internal_address: 172.27.2.37
+    role: [worker]
+    labels:
+      app: ingress
 
 ingress:
   provider: nginx
+  node_selector:
+    app: ingress
+  tolerations:
+  - key: "node.kubernetes.io/unreachable"
+    operator: "Exists"
+    effect: "NoExecute"
+    tolerationseconds: 300
+  - key: "node.kubernetes.io/not-ready"
+    operator: "Exists"
+    effect: "NoExecute"
+    tolerationseconds: 300
 
 services:
   etcd:
