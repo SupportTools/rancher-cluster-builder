@@ -25,7 +25,7 @@ local_cluster_auth_endpoint:
   fqdn: a1-k8s-inf-k8s.support.tools
 
 nodes:
-  - address: 172.27.2.33
+  - address: 208.86.161.87
     user: root
     hostname_override: a1ubk8si01
     internal_address: 172.27.2.33
