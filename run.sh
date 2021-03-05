@@ -73,53 +73,44 @@ rolling_reboot() {
   for node in `kubectl get nodes -o name | awk -F'/' '{print $2}'`
   do
     echo "Node: $node"
+    ipaddress=`kubectl get node $node -o jsonpath='{.metadata.annotations.rke\.cattle\.io/external-ip}'`
+    if [[ -z $ipaddress ]]
+    then
+      ipaddress=`kubectl get node $node -o jsonpath='{.metadata.annotations.rke\.cattle\.io/internal-ip}'`
+    fi
+    echo "IpAddress: $ipaddress"
     status=`kubectl get nodes "$node" | tail -n1 | awk '{print $2}'`
     echo "Checking if node is ready..."
     if [[ "$status" == "Ready" ]]
     then
       echo "Cordoning node..."
       kubectl cordon "$node"
-      kubectl drain "$node" --ignore-daemonsets --delete-local-data --force --grace-period=900
-      echo "Sleeping..."
-      sleep 360
+      ## Skipping drain to speed up rolling reboot
+      #kubectl drain "$node" --ignore-daemonsets --delete-local-data --force --grace-period=60
       echo "Updating..."
-      ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$node" 'apt update -y && apt upgrade -y'
+      ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$ipaddress" 'apt update -y && apt upgrade -y; reboot'
       echo "Rebooting..."
-      ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$node" 'reboot'
-      echo "Sleeping..."
-      sleep 360
+      sleep 30
       echo "Waiting for ping..."
-      while ! ping -c 1 $node
-      do
-        echo "Waiting..."
-        sleep 1
-      done
-      echo "Waiting for SSH..."
-      while ! ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$node" "uptime"
+      while ! ping -c 1 $ipaddress
       do
         echo "Waiting..."
         sleep 1
       done
       echo "Waiting for docker..."
-      while ! ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$node" "docker ps"
+      while ! ssh -q -o StrictHostKeyChecking=no -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null root@"$ipaddress" "docker ps"
       do
         echo "Waiting..."
         sleep 1
       done
-      echo "Sleeping..."
-      sleep 360
       echo "Waiting for node ready..."
       while ! kubectl get nodes "$node" | tail -n1 | awk '{print $2}' | grep "Ready"
       do
         echo "Waiting..."
         sleep 1
       done
-      echo "Sleeping..."
-      sleep 360
       echo "Uncordoning node..."
       kubectl uncordon "$node"
-      echo "Sleeping..."
-      sleep 360
       rke up
     else
        echo "Uncordoning node..."

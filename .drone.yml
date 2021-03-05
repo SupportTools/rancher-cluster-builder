@@ -8,7 +8,7 @@ concurrency:
 
 steps:
   - name: Builder
-    image: supporttools/rancher-cluster-builder:6
+    image: supporttools/rancher-cluster-builder:10
     pull: true
     environment:
       SSH_KEY:
