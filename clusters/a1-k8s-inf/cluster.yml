@@ -25,7 +25,7 @@ local_cluster_auth_endpoint:
   fqdn: a1-k8s-inf-k8s.support.tools
 
 nodes:
-  - address: 172.27.2.33
+  - address: 208.86.161.87
     user: root
     hostname_override: a1ubk8si01
     internal_address: 172.27.2.33
@@ -40,9 +40,69 @@ nodes:
     hostname_override: a1ubk8si03
     internal_address: 172.27.2.35
     role: [controlplane,worker,etcd]
+  - address: 172.27.2.36
+    user: root
+    hostname_override: a1ublbi01
+    internal_address: 172.27.2.36
+    role: [worker]
+    labels:
+      app: ingress
+  - address: 172.27.2.37
+    user: root
+    hostname_override: a1ublbi02
+    internal_address: 172.27.2.37
+    role: [worker]
+    labels:
+      app: ingress
+  - address: 172.27.2.44
+    user: root
+    hostname_override: a1ublongi01
+    internal_address: 172.27.2.44
+    role: [worker]
+    labels:
+      app: longhorn
+  - address: 172.27.2.45
+    user: root
+    hostname_override: a1ublongi02
+    internal_address: 172.27.2.45
+    role: [worker]
+    labels:
+      app: longhorn
+  - address: 172.27.2.46
+    user: root
+    hostname_override: a1ublongi03
+    internal_address: 172.27.2.46
+    role: [worker]
+    labels:
+      app: longhorn
+  - address: 172.27.2.47
+    user: root
+    hostname_override: a1ublongi04
+    internal_address: 172.27.2.47
+    role: [worker]
+    labels:
+      app: longhorn
+  - address: 172.27.2.48
+    user: root
+    hostname_override: a1ublongi05
+    internal_address: 172.27.2.48
+    role: [worker]
+    labels:
+      app: longhorn
 
 ingress:
   provider: nginx
+  node_selector:
+    app: ingress
+  tolerations:
+  - key: "node.kubernetes.io/unreachable"
+    operator: "Exists"
+    effect: "NoExecute"
+    tolerationseconds: 300
+  - key: "node.kubernetes.io/not-ready"
+    operator: "Exists"
+    effect: "NoExecute"
+    tolerationseconds: 300
 
 services:
   etcd:
