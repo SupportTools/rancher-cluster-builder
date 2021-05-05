@@ -237,10 +237,10 @@ rancher_up() {
   if [[ -z $RancherVerison ]]
   then
     techo "Installing/Upgrading Rancher to latest"
-    helm upgrade --install rancher "$RancherChartLong" --namespace cattle-system -f values.yaml
+    helm upgrade --install rancher "$RancherChartLong" --namespace cattle-system -f rancher-values.yaml
   else
     techo "Installing/Upgrading Rancher to $RancherVerison"
-    helm upgrade --install rancher "$RancherChartLong" --namespace cattle-system -f values.yaml --version "$RancherVerison"
+    helm upgrade --install rancher "$RancherChartLong" --namespace cattle-system -f rancher-values.yaml --version "$RancherVerison"
   fi
   techo "Waiting for Rancher to be rolled out"
   kubectl -n cattle-system rollout status deploy/rancher -w
