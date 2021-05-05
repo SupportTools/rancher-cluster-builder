@@ -218,7 +218,7 @@ rancher_up() {
     install_cert-manager
   fi
   techo "Adding Rancher helm repos"
-  RancherChart=`cat ./rancher-values.yaml | grep 'rancher_chart:' | awk '{print $2}'`
+  RancherChart=`cat ./rancher-values.yaml | grep 'rancher_chart:' | awk '{print $2}' | awk -F '/' '{print $1}'`
   RancherChartUrlEnd=`echo $RancherChart | awk -F '-' '{print $2}' | awk -F '/' '{print $1}'`
   if [[ -z $RancherChart ]]
   then
@@ -229,7 +229,6 @@ rancher_up() {
   techo "RancherChartUrlEnd: $RancherChartUrlEnd"
   helm repo add "$RancherChart" https://releases.rancher.com/server-charts/"$RancherChartUrlEnd"
   techo "Fetching charts"
-  helm fetch "$RancherChart"/rancher
   helm repo update
   techo "Deploying Rancher"
   RancherVerison=`cat ./rancher-values.yaml | grep 'rancher_verison:' | awk '{print $2}'`
