@@ -219,7 +219,7 @@ rancher_up() {
   fi
   techo "Adding Rancher helm repos"
   RancherChart=`cat ./rancher-values.yaml | grep 'rancher_chart:' | awk '{print $2}'`
-  RancherChartUrlEnd=`echo $RancherChart | awk -F '-' '{print $2}'`
+  RancherChartUrlEnd=`echo $RancherChart | awk -F '-' '{print $2}' | awk -F '/' '{print $1}'`
   if [[ -z $RancherChart ]]
   then
     RancherChart="rancher-latest"
