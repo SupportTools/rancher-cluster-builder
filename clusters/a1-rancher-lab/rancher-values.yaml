@@ -5,5 +5,5 @@ hostname: a1-rancher-lab.support.tools
 ingress:
   tls:
     source: secret
-rancher_verison: 2.5.5
+rancher_verison: 2.5.7
 rancher_chart: rancher-latest/rancher
