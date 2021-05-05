@@ -126,6 +126,7 @@ etcd_snapshot() {
   else
     SnapshotName="builder-"`date "+%Y-%m-%d-%H-%M-%S"`
   fi
+  pull-files-from-s3 $Cluster
   cd "$CWD"/clusters/"$Cluster"
   update-creds-in-cluster-yml
   techo "Taking etcd snapshot"
