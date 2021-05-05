@@ -218,16 +218,18 @@ rancher_up() {
     install_cert-manager
   fi
   techo "Adding Rancher helm repos"
-  RancherChart=`cat ./rancher-values.yaml | grep 'rancher_chart:' | awk '{print $2}' | awk -F '/' '{print $1}'`
-  RancherChartUrlEnd=`echo $RancherChart | awk -F '-' '{print $2}' | awk -F '/' '{print $1}'`
+  RancherChartLong=`cat ./rancher-values.yaml | grep 'rancher_chart:' | awk '{print $2}'`
+  RancherChartShort=`echo $RancherChartLong  | awk -F '/' '{print $1}'`
+  RancherChartUrlEnd=`echo $RancherChartShort | awk -F '-' '{print $2}' | awk -F '/' '{print $1}'`
   if [[ -z $RancherChart ]]
   then
-    RancherChart="rancher-latest"
+    RancherChartShort="rancher-latest"
     RancherChartUrlEnd="latest"
   fi
-  techo "RancherChart: $RancherChart"
+  techo "RancherChartLong: $RancherChartLong"
+  techo "RancherChartShort: $RancherChartShort"
   techo "RancherChartUrlEnd: $RancherChartUrlEnd"
-  helm repo add "$RancherChart" https://releases.rancher.com/server-charts/"$RancherChartUrlEnd"
+  helm repo add "$RancherChartShort" https://releases.rancher.com/server-charts/"$RancherChartUrlEnd"
   techo "Fetching charts"
   helm repo update
   techo "Deploying Rancher"
@@ -235,10 +237,10 @@ rancher_up() {
   if [[ -z $RancherVerison ]]
   then
     techo "Installing/Upgrading Rancher to latest"
-    helm upgrade --install rancher "$RancherChart" --namespace cattle-system -f values.yaml
+    helm upgrade --install rancher "$RancherChartLong" --namespace cattle-system -f values.yaml
   else
     techo "Installing/Upgrading Rancher to $RancherVerison"
-    helm upgrade --install rancher "$RancherChart" --namespace cattle-system -f values.yaml --version "$RancherVerison"
+    helm upgrade --install rancher "$RancherChartLong" --namespace cattle-system -f values.yaml --version "$RancherVerison"
   fi
   techo "Waiting for Rancher to be rolled out"
   kubectl -n cattle-system rollout status deploy/rancher -w
