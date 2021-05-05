@@ -127,6 +127,7 @@ etcd_snapshot() {
     SnapshotName="builder-"`date "+%Y-%m-%d-%H-%M-%S"`
   fi
   cd "$CWD"/clusters/"$Cluster"
+  update-creds-in-cluster-yml
   techo "Taking etcd snapshot"
   techo "Snapshot Name: $SnapshotName"
   rke etcd snapshot-save --name "$SnapshotName" --config cluster.yml
