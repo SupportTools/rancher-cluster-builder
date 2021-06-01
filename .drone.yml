@@ -25,3 +25,11 @@ steps:
         from_secret: S3_ENDPOINT
     commands:
       - bash ./run.sh
+
+node_selector:
+  kubernetes.io/arch: amd64
+  kubernetes.io/os: linux
+  drone-runner: true
+
+image_pull_secrets:
+- regcreds
