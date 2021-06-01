@@ -31,5 +31,6 @@ steps:
       - bash ./run.sh
 
 node_selector:
-  beta.kubernetes.io/arch: amd64
+  kubernetes.io/arch: amd64
+  kubernetes.io/os: linux
   drone-runner: true
