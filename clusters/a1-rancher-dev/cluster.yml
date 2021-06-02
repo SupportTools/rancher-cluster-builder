@@ -9,11 +9,11 @@ nodes:
     hostname_override: a1ubrancherd02
     internal_address: 172.27.6.22
     role: [controlplane,worker,etcd]
-#  - address: 172.27.6.23
-#    user: root
-#    hostname_override: a1ubrancherd03
-#    internal_address: 172.27.6.23
-#    role: [controlplane,worker,etcd]
+  - address: 172.27.6.23
+    user: root
+    hostname_override: a1ubrancherd03
+    internal_address: 172.27.6.23
+    role: [controlplane,worker,etcd]
 
 ingress:
   provider: nginx
