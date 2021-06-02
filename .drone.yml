@@ -3,6 +3,10 @@ kind: pipeline
 type: kubernetes
 name: Rancher-Cluster-Builder
 
+platform:
+  os: linux
+  arch: amd64
+
 concurrency:
   limit: 1
 
@@ -30,6 +34,3 @@ node_selector:
   kubernetes.io/arch: amd64
   kubernetes.io/os: linux
   drone-runner: true
-
-image_pull_secrets:
-- regcreds
