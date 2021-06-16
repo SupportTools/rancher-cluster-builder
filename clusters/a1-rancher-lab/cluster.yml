@@ -68,7 +68,7 @@ system_images:
   cert_downloader: a1-harbor.support.tools/cache/rancher/rke-tools:v0.1.75
   kubernetes: a1-harbor.support.tools/cache/rancher/hyperkube:v1.20.7-rancher1
   kubernetes_services_sidecar: a1-harbor.support.tools/cache/rancher/rke-tools:v0.1.75
-  pod_infra_container: a1-harbor.support.tools/cache/rancher/pause-amd64:3.2
+  pod_infra_container: a1-harbor.support.tools/cache/rancher/pause-amd64:3.1
 
   # CoreDNS images
   coredns: coredns/coredns:1.8.0
