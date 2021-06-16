@@ -4,16 +4,16 @@ nodes:
     hostname_override: a1ubrancherl01
     internal_address: 172.27.7.21
     role: [controlplane,worker,etcd]
-#  - address: 172.27.7.22
-#    user: root
-#    hostname_override: a1ubrancherl02
-#    internal_address: 172.27.7.22
-#    role: [controlplane,worker,etcd]
-#  - address: 172.27.7.23
-#    user: root
-#    hostname_override: a1ubrancherl03
-#    internal_address: 172.27.7.23
-#    role: [controlplane,worker,etcd]
+  - address: 172.27.7.22
+    user: root
+    hostname_override: a1ubrancherl02
+    internal_address: 172.27.7.22
+    role: [controlplane,worker,etcd]
+  - address: 172.27.7.23
+    user: root
+    hostname_override: a1ubrancherl03
+    internal_address: 172.27.7.23
+    role: [controlplane,worker,etcd]
 
 ingress:
   provider: nginx
