@@ -68,24 +68,29 @@ system_images:
   cert_downloader: a1-harbor.support.tools/cache/rancher/rke-tools:v0.1.75
   kubernetes: a1-harbor.support.tools/cache/rancher/hyperkube:v1.20.7-rancher1
   kubernetes_services_sidecar: a1-harbor.support.tools/cache/rancher/rke-tools:v0.1.75
-  pod_infra_container: a1-harbor.support.tools/cache/rancher/pause-amd64:3.1
+  pod_infra_container: a1-harbor.support.tools/cache/rancher/mirrored-pause:3.2
 
   # CoreDNS images
-  coredns: coredns/coredns:1.8.0
-  coredns_autoscaler: a1-harbor.support.tools/cache/rancher/cluster-proportional-autoscaler-amd64:1.8.1
+  coredns: a1-harbor.support.tools/cache/rancher/mirrored-coredns-coredns:1.8.0
+  coredns_autoscaler: a1-harbor.support.tools/cache/rancher/mirrored-cluster-proportional-autoscaler:1.8.1
 
   # Calico images
-  calico_node: a1-harbor.support.tools/cache/rancher/calico-node:v3.17.2
-  calico_cni: a1-harbor.support.tools/cache/rancher/calico-cni:v3.17.2
+  calico_node: a1-harbor.support.tools/cache/rancher/mirrored-calico-node:v3.17.2
+  calico_cni: a1-harbor.support.tools/cache/rancher/mirrored-calico-cni:v3.17.2
+  calico_controllers: a1-harbor.support.tools/cache/rancher/mirrored-calico-kube-controllers:v3.17.2
+  calico_ctl: a1-harbor.support.tools/cache/rancher/mirrored-calico-ctl:v3.17.2
+  calico_flex_vol: a1-harbor.support.tools/cache/rancher/mirrored-calico-pod2daemon-flexvol:v3.17.2
 
   # Canal images
-  canal_node: a1-harbor.support.tools/cache/rancher/calico-node:v3.17.2
-  canal_cni: a1-harbor.support.tools/cache/rancher/calico-cni:v3.17.2
+  canal_node: a1-harbor.support.tools/cache/rancher/mirrored-calico-node:v3.17.2
+  canal_cni: a1-harbor.support.tools/cache/rancher/mirrored-calico-cni:v3.17.2
+  canal_controllers: a1-harbor.support.tools/cache/rancher/mirrored-calico-kube-controllers:v3.17.2
   canal_flannel: a1-harbor.support.tools/cache/rancher/coreos-flannel:v0.13.0-rancher1
+  canal_flex_vol: a1-harbor.support.tools/cache/rancher/mirrored-calico-pod2daemon-flexvol:v3.17.2
 
   # Ingress controller images
   ingress: a1-harbor.support.tools/cache/rancher/nginx-ingress-controller:nginx-0.43.0-rancher3
   ingress_backend: a1-harbor.support.tools/cache/rancher/mirrored-nginx-ingress-controller-defaultbackend:1.5-rancher1
 
   # Metrics server image
-  metrics_server: a1-harbor.support.tools/cache/rancher/metrics-server-amd64:v0.4.1
+  metrics_server: a1-harbor.support.tools/cache/rancher/mirrored-metrics-server:v0.4.1
