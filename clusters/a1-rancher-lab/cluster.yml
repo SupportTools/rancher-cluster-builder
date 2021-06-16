@@ -1,45 +1,19 @@
-local_cluster_auth_endpoint:
-  ca_certs: |-
-    -----BEGIN CERTIFICATE-----
-    MIIDdTCCAl2gAwIBAgILBAAAAAABFUtaw5QwDQYJKoZIhvcNAQEFBQAwVzELMAkG
-    A1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExEDAOBgNVBAsTB1Jv
-    b3QgQ0ExGzAZBgNVBAMTEkdsb2JhbFNpZ24gUm9vdCBDQTAeFw05ODA5MDExMjAw
-    MDBaFw0yODAxMjgxMjAwMDBaMFcxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9i
-    YWxTaWduIG52LXNhMRAwDgYDVQQLEwdSb290IENBMRswGQYDVQQDExJHbG9iYWxT
-    aWduIFJvb3QgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDaDuaZ
-    jc6j40+Kfvvxi4Mla+pIH/EqsLmVEQS98GPR4mdmzxzdzxtIK+6NiY6arymAZavp
-    xy0Sy6scTHAHoT0KMM0VjU/43dSMUBUc71DuxC73/OlS8pF94G3VNTCOXkNz8kHp
-    1Wrjsok6Vjk4bwY8iGlbKk3Fp1S4bInMm/k8yuX9ifUSPJJ4ltbcdG6TRGHRjcdG
-    snUOhugZitVtbNV4FpWi6cgKOOvyJBNPc1STE4U6G7weNLWLBYy5d4ux2x8gkasJ
-    U26Qzns3dLlwR5EiUWMWea6xrkEmCMgZK9FGqkjWZCrXgzT/LCrBbBlDSgeF59N8
-    9iFo7+ryUp9/k5DPAgMBAAGjQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8E
-    BTADAQH/MB0GA1UdDgQWBBRge2YaRQ2XyolQL30EzTSo//z9SzANBgkqhkiG9w0B
-    AQUFAAOCAQEA1nPnfE920I2/7LqivjTFKDK1fPxsnCwrvQmeU79rXqoRSLblCKOz
-    yj1hTdNGCbM+w6DjY1Ub8rrvrTnhQ7k4o+YviiY776BQVvnGCv04zcQLcFGUl5gE
-    38NflNUVyRRBnMRddWQVDf9VMOyGj/8N7yy5Y0b2qvzfvGn9LhJIZJrglfCm7ymP
-    AbEVtQwdpf5pLGkkeB6zpxxxYu7KyJesF12KwvhHhm4qxFYxldBniYUr+WymXUad
-    DKqC5JlR3XC321Y9YeRq4VzW9v493kHMB65jUr9TU/Qr6cf9tveCX4XSQRjbgbME
-    HMUfpIBvFSDJ3gyICh3WZlXi/EjJKSZp4A==
-    -----END CERTIFICATE-----
-  enabled: true
-  fqdn: a1-rancher-lab-k8s.support.tools
-
 nodes:
   - address: 172.27.7.21
     user: root
     hostname_override: a1ubrancherl01
     internal_address: 172.27.7.21
     role: [controlplane,worker,etcd]
-  - address: 172.27.7.22
-    user: root
-    hostname_override: a1ubrancherl02
-    internal_address: 172.27.7.22
-    role: [controlplane,worker,etcd]
-  - address: 172.27.7.23
-    user: root
-    hostname_override: a1ubrancherl03
-    internal_address: 172.27.7.23
-    role: [controlplane,worker,etcd]
+#  - address: 172.27.7.22
+#    user: root
+#    hostname_override: a1ubrancherl02
+#    internal_address: 172.27.7.22
+#    role: [controlplane,worker,etcd]
+#  - address: 172.27.7.23
+#    user: root
+#    hostname_override: a1ubrancherl03
+#    internal_address: 172.27.7.23
+#    role: [controlplane,worker,etcd]
 
 ingress:
   provider: nginx
@@ -85,15 +59,15 @@ dns:
   - 172.27.2.23
   - 172.27.2.24
 
-kubernetes_version: v1.20.5-rancher1-1
+kubernetes_version: v1.20.7-rancher1-1
 
 system_images:
-  etcd: a1-harbor.support.tools/cache/rancher/coreos-etcd:v3.4.14-rancher1
-  alpine: a1-harbor.support.tools/cache/rancher/rke-tools:v0.1.72
-  nginx_proxy: a1-harbor.support.tools/cache/rancher/rke-tools:v0.1.72
-  cert_downloader: a1-harbor.support.tools/cache/rancher/rke-tools:v0.1.72
-  kubernetes: a1-harbor.support.tools/cache/rancher/hyperkube:v1.20.5-rancher1
-  kubernetes_services_sidecar: a1-harbor.support.tools/cache/rancher/rke-tools:v0.1.72
+  etcd: a1-harbor.support.tools/cache/rancher/coreos-etcd:v3.4.15-rancher1
+  alpine: a1-harbor.support.tools/cache/rancher/rke-tools:v0.1.75
+  nginx_proxy: a1-harbor.support.tools/cache/rancher/rke-tools:v0.1.75
+  cert_downloader: a1-harbor.support.tools/cache/rancher/rke-tools:v0.1.75
+  kubernetes: a1-harbor.support.tools/cache/rancher/hyperkube:v1.20.7-rancher1
+  kubernetes_services_sidecar: a1-harbor.support.tools/cache/rancher/rke-tools:v0.1.75
   pod_infra_container: a1-harbor.support.tools/cache/rancher/pause-amd64:3.2
 
   # CoreDNS images
